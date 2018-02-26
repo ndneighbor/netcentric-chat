@@ -14,7 +14,7 @@ class Client:
             if errorMessage.errno == socket.error.errno:
                 sys.stderr.write('Connection refused to ' + str(host) + ' on port ' + str(port))
             else:
-                sys.stderr.write('Failed to create a client socket: Error - %s\n', errorMessage[1])
+                sys.stderr.write('Failed to create a client socket: Error - %s\n', errorMessage)
 
     def disconnect(self):
         if self.isClientConnected:

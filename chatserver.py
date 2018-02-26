@@ -24,7 +24,7 @@ class Server:
         try:
             self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         except socket.error as errorMessage:
-            sys.stderr.write("Failed to initialize the server. Error - %s\n", errorMessage[1])
+            sys.stderr.write("Failed to initialize the server. Error - %s\n", errorMessage)
             raise
 
         if allowReuseAddress:
