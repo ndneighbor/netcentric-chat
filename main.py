@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-import ChatClient as client
+import chatclient as client
 import BaseDialog as dialog
 import BaseEntry as entry
 import threading

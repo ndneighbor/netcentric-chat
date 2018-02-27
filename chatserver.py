@@ -1,12 +1,10 @@
 import socket
 import sys
 import threading
+import cmd
+from cmd import Cmd
 
-import socket
-import sys
-import threading
-
-class Server:
+class Server(Cmd):
     SERVER_CONFIG = {"BACKLOG": 15}
 
     HELP_MESSAGE = """> The list of commands available are:
@@ -104,15 +102,35 @@ class Server:
                 socket.send((name + message).encode('utf8'))
             else:
                 socket.send(('You: ' + message).encode('utf8'))
+    
+    def do_die(self):
+        print("DIE command recieved.\n")
+        self.server_shutdown
 
+    def do_hello(self, args):
+        """Says hello. If you provide a name, it will greet you with it."""
+        if len(args) == 0:
+            name = 'stranger'
+        else:
+            name = args
+        print ("Hello, %s" % name)
+
+    def do_quit(self, args):
+        """Quits the program."""
+        print ("Quitting.")
+        raise SystemExit
+    
 def main():
     chatServer = Server()
 
     print("\nListening on port " + str(chatServer.port))
     print("Waiting for connections...\n")
 
+    chatServer.prompt = '> '
+    chatServer.cmdloop('Starting prompt...')
     chatServer.start_listening()
     chatServer.server_shutdown()
 
 if __name__ == "__main__":
     main()
+
