@@ -4,6 +4,58 @@ import chatclient as client
 import BaseDialog as dialog
 import BaseEntry as entry
 import threading
+import argparse
+import configparser
+import sys
+
+USEAGE = "usage: Python main.py -h [hostname] -u [username] -p [server port] -c [configuration file] -L [log file]"
+
+global log_file_name
+global args
+global username
+global hostname
+
+parser = argparse.ArgumentParser(add_help=False)
+parser.add_argument("supplied",nargs="*", help ="hostname, username, password")
+
+parser.add_argument("-h", "--h", help="provide hostname",
+                    type=str)
+parser.add_argument("-u", "--u", help="provide username",
+                    type=str)
+parser.add_argument("-p","--p", help="provide server port",
+                    type=int)
+parser.add_argument("-c","--c", help="Changes config file path", type=str)
+parser.add_argument("-L","--L", help="Changes files log path", type=str)
+parser.add_argument("-t","--t", help="Changes files test path", type=str)
+
+args = parser.parse_args()
+
+if args.h:
+    hostname = args.h
+if args.u:
+    username = args.u
+if args.p:
+    port = args.p
+if args.c:
+    config_file = args.c
+if args.L:
+    log_file = args.L
+if args.t:
+    test_file = args.t
+
+global connect_ready
+
+print(args)
+
+if (((args.h and args.u and args.p) is not None) or ((args.h and args.p) is not None)):
+    connect_ready = True
+if (args.c is None):
+    print("No config file provided")
+if (args.t is None):
+    print("No test file provided")
+
+
+
 
 class SocketThreadedTask(threading.Thread):
     def __init__(self, socket, callback):
@@ -108,6 +160,9 @@ class ChatGUI(tk.Frame):
         self.ChatWindow.bind_widgets(self.clientSocket.send)
         self.parent.protocol("WM_DELETE_WINDOW", self.on_closing)
 
+        if (connect_ready == True):
+            self.arg_to_server()
+
     def initUI(self, parent):
         self.parent = parent
         self.parent.title("ChatApp")
@@ -149,6 +204,17 @@ class ChatGUI(tk.Frame):
             else:
                 tk.messagebox.showwarning("Error", "Unable to connect to the server.")
 
+    def arg_to_server(self):
+        if self.clientSocket.isClientConnected:
+            return
+            
+        self.clientSocket.connect(hostname, port)
+
+        if self.clientSocket.isClientConnected:
+            SocketThreadedTask(self.clientSocket, self.ChatWindow.update_chat_window).start()
+        else:
+            tk.messagebox.showwarning("Error", "Unable to connect to the server.")
+
     def on_closing(self):
         if self.clientSocket.isClientConnected:
             self.clientSocket.send('/quit')
@@ -158,4 +224,6 @@ class ChatGUI(tk.Frame):
 if __name__ == "__main__":
     root = tk.Tk()
     chatGUI = ChatGUI(root)
+    client.Client().connect(hostname, port)
     root.mainloop()
+    
