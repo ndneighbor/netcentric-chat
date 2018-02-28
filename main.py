@@ -44,6 +44,8 @@ if args.t:
     test_file = args.t
 
 global connect_ready
+global test_ready
+global config_ready
 
 print(args)
 
@@ -51,8 +53,10 @@ if (((args.h and args.u and args.p) is not None) or ((args.h and args.p) is not 
     connect_ready = True
 if (args.c is None):
     print("No config file provided")
+    config_ready = False
 if (args.t is None):
     print("No test file provided")
+    test_ready = False
 
 
 
@@ -163,6 +167,12 @@ class ChatGUI(tk.Frame):
         if (connect_ready == True):
             self.arg_to_server()
 
+        if (test_ready == True):
+            print("Testing")
+        
+        if (config_ready == True):
+            print("Loading config")
+
     def initUI(self, parent):
         self.parent = parent
         self.parent.title("ChatApp")
@@ -212,6 +222,8 @@ class ChatGUI(tk.Frame):
 
         if self.clientSocket.isClientConnected:
             SocketThreadedTask(self.clientSocket, self.ChatWindow.update_chat_window).start()
+            if (username is not None):
+                self.clientSocket.send(username)
         else:
             tk.messagebox.showwarning("Error", "Unable to connect to the server.")
 
