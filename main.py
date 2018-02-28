@@ -38,19 +38,19 @@ if args.p:
     port = args.p
 if args.c:
     config_file = args.c
+    config_ready = True
 if args.L:
     log_file = args.L
 if args.t:
     test_file = args.t
-
-global connect_ready
-global test_ready
-global config_ready
+    test_ready = True
 
 print(args)
 
 if (((args.h and args.u and args.p) is not None) or ((args.h and args.p) is not None)):
     connect_ready = True
+if (args.h or args.p is None):
+    connect_ready = False
 if (args.c is None):
     print("No config file provided")
     config_ready = False
@@ -215,6 +215,8 @@ class ChatGUI(tk.Frame):
                 tk.messagebox.showwarning("Error", "Unable to connect to the server.")
 
     def arg_to_server(self):
+        global username 
+        username = ""
         if self.clientSocket.isClientConnected:
             return
             
@@ -222,7 +224,7 @@ class ChatGUI(tk.Frame):
 
         if self.clientSocket.isClientConnected:
             SocketThreadedTask(self.clientSocket, self.ChatWindow.update_chat_window).start()
-            if (username is not None):
+            if (username != ""):
                 self.clientSocket.send(username)
         else:
             tk.messagebox.showwarning("Error", "Unable to connect to the server.")
@@ -236,6 +238,5 @@ class ChatGUI(tk.Frame):
 if __name__ == "__main__":
     root = tk.Tk()
     chatGUI = ChatGUI(root)
-    client.Client().connect(hostname, port)
     root.mainloop()
     
