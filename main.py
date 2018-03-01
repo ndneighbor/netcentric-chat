@@ -7,6 +7,7 @@ import threading
 import argparse
 import configparser
 import sys
+import logging
 
 USEAGE = "usage: Python main.py -h [hostname] -u [username] -p [server port] -c [configuration file] -L [log file]"
 
@@ -85,16 +86,33 @@ class ChatDialog(dialog.BaseDialog):
     def body(self, master):
         tk.Label(master, text="Enter host:").grid(row=0, sticky="w")
         tk.Label(master, text="Enter port:").grid(row=1, sticky="w")
+        tk.Label(master, text="Enter name:").grid(row=2, sticky="w")
+        tk.Label(master, text="Enter config file location:").grid(row=3, sticky="w")
+        tk.Label(master, text="Enter test file location:").grid(row=4, sticky="w")
+        tk.Label(master, text="Enter log file name:").grid(row=5, sticky="w")
 
         self.hostEntryField = tk.Entry(master)
         self.portEntryField = tk.Entry(master)
+        self.nameEntryField = tk.Entry(master)
+        self.configEntryField = tk.Entry(master)
+        self.testEntryField = tk.Entry(master)
+        self.logEntryField = tk.Entry(master)
 
         self.hostEntryField.grid(row=0, column=1)
         self.portEntryField.grid(row=1, column=1)
+        self.nameEntryField.grid(row=2, column=1)
+        self.configEntryField.grid(row=3, column=1)
+        self.testEntryField.grid(row=4, column=1)
+        self.logEntryField.grid(row=5, column=1)
+
         return self.hostEntryField
 
     def validate(self):
         host = str(self.hostEntryField.get())
+        name = str(self.nameEntryField.get())
+        config = str(self.configEntryField.get())
+        test = str(self.testEntryField.get())
+        log = str(self.logEntryField.get())
 
         try:
             port = int(self.portEntryField.get())
@@ -213,6 +231,18 @@ class ChatGUI(tk.Frame):
                 SocketThreadedTask(self.clientSocket, self.ChatWindow.update_chat_window).start()
             else:
                 tk.messagebox.showwarning("Error", "Unable to connect to the server.")
+        # Logic for the name entry field
+        if (dialogResult[2] != None):
+            self.clientSocket.send(username)
+        
+        if (dialogResult[3] == None):
+            self.clientSocket.save_to_config()
+
+        if (dialogResult[4] != None):
+            self.clientSocket.test()
+
+        if (dialogResult[5] != None):
+            self.clientSocket.setup_logs(username)
 
     def arg_to_server(self):
         global username 
@@ -240,3 +270,11 @@ if __name__ == "__main__":
     chatGUI = ChatGUI(root)
     root.mainloop()
     
+# Logger block
+
+logger = logging.getLogger('myapp')
+hdlr = logging.FileHandler('/var/tmp/myapp.log')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr) 
+logger.setLevel(logging.WARNING)

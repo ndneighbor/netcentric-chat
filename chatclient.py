@@ -1,5 +1,15 @@
 import socket
 import sys
+import logging
+
+# Logger Block
+
+logger = logging.getLogger('myapp')
+hdlr = logging.FileHandler('/var/tmp/myapp.log')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr) 
+logger.setLevel(logging.WARNING)
 
 class Client:
     def __init__(self):
@@ -32,3 +42,33 @@ class Client:
             return ""
 
         return self.clientSocket.recv(size).decode('utf8')
+
+    def setup_logs(self, log):
+        try:
+            x = open(log, "r")
+            pass
+        except FileNotFoundError:
+            print("No log file found, making one")
+            pass
+
+    def log(self, data, log):
+        try:
+            x = open(log, "r")
+            pass
+        except FileNotFoundError:
+            print("Logs should have been setup")
+            pass
+        if (log == log):
+            open(log, "w")
+
+    def save_to_config(self):
+        print("Save the connect to a txt")
+
+    def read_config(self):
+        print("Reads config")
+
+    def test(self):
+        print("Take a file & send cmds/msgs")
+
+    def make_room(self):
+        print("Fires off message to make a chat room")
