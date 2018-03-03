@@ -43,9 +43,9 @@ class Client:
 
         return self.clientSocket.recv(size).decode('utf8')
 
-    def setup_logs(self, log):
+    def setup_logs(self, filename):
         try:
-            x = open(log, "r")
+            x = open(filename, "r")
             pass
         except FileNotFoundError:
             print("No log file found, making one")

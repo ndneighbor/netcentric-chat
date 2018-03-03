@@ -224,6 +224,8 @@ class ChatGUI(tk.Frame):
 
         dialogResult = ChatDialog(self.parent).result
 
+        print(dialogResult)
+
         if dialogResult:
             self.clientSocket.connect(dialogResult[0], dialogResult[1])
 
@@ -242,7 +244,7 @@ class ChatGUI(tk.Frame):
             self.clientSocket.test()
 
         if (dialogResult[5] != None):
-            self.clientSocket.setup_logs(username)
+            self.clientSocket.setup_logs(log_file)
 
     def arg_to_server(self):
         global username 
