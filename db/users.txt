@@ -1,0 +1,3 @@
+username,password,level,banned
+Cesibunny,123jujuy,admin,false
+hello123,123jujuy,user,false
